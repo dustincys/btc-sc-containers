@@ -6,7 +6,7 @@ LABEL maintainer="Andre Fonseca" \
 ARG CELLRANGER_VERSION='7.1.0'
 
 ## Please change the link considering the 10x Genomics End User Software License Agreement
-ARG CELLRANGER_URL='https://cf.10xgenomics.com/releases/cell-exp/cellranger-${CELLRANGER_VERSION}.tar.gz'
+ARG CELLRANGER_URL="https://cf.10xgenomics.com/releases/cell-exp/cellranger-${CELLRANGER_VERSION}.tar.gz"
 ENV PATH /opt/cellranger-${CELLRANGER_VERSION}:$PATH
 
 # Install basic requirments

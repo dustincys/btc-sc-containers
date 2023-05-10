@@ -11,7 +11,7 @@ RUN apt-get update && \
 # Install basic requirments
 RUN apt-get install -y wget \
     build-essential \
-    zlib1g-dev \ 
+    zlib1g-dev \
     libncurses5-dev \
     libgdbm-dev \
     libnss3-dev \
