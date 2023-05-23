@@ -1,4 +1,4 @@
-FROM oandrefonseca/scbase:1.0
+FROM ghcr.io/wanglab-computationalbiology/scbase:main
 
 LABEL maintainer="Andre Fonseca" \
     description="scRPackages - Container with single-cell R dependencies, including cell annotation and batch effect"

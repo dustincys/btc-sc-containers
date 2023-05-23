@@ -1,5 +1,5 @@
 # Use an official Ubuntu Linux as the base image
-FROM --platform=linux/amd64 ubuntu:20.04
+FROM ubuntu:20.04
 
 LABEL maintainer="Andre Fonseca" \
     description="scBase - The base container for versioning the single-cell R and Python dependencies"

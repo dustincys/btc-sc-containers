@@ -1,4 +1,5 @@
-FROM ubuntu:latest
+FROM ghcr.io/wanglab-computationalbiology/scbase:main
+
 LABEL maintainer="Andre Fonseca" \
     description="scVariant - Container with scAllele and other variant callings"
 # https://bioconductor.org/packages/devel/bioc/vignettes/FLAMES/inst/doc/FLAMES_vignette.html
