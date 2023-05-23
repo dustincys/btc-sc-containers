@@ -1,4 +1,4 @@
-FROM ghcr.io/wanglab-computationalbiology/scagnostic:main
+FROM --platform=linux/x86_64 ghcr.io/wanglab-computationalbiology/scagnostic:main
 
 LABEL maintainer="Andre Fonseca" \
     description="scVariant - Container with scAllele and other variant callings"
