@@ -1,4 +1,4 @@
-FROM ghcr.io/wanglab-computationalbiology/scbase:main
+FROM ghcr.io/wanglab-computationalbiology/scagnostic:main
 
 LABEL maintainer="Andre Fonseca" \
     description="scCommons - Container with several packages associated with reports generation and data analysis"

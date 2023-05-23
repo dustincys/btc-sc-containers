@@ -2,5 +2,9 @@
 
 # BT-SC-CONTAINERS
 
-`docker login docker.pkg.github.com --username <your_user_name> --password <generated_token_not_password>`
+```
+docker login ghcr.io --username <your_user_name> --password <generated_token_not_password>
+docker pull ghcr.io/wanglab-computationalbiology/scbase:main
+
+```
 

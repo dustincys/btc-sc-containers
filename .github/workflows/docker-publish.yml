@@ -29,10 +29,10 @@ jobs:
       fail-fast: false
       matrix:
         image_name:
-          - "scBase"
+          - "scAgnostic"
           - "scAligners"
           - "scRPackages"
-          - "scRCommons"
+          - "scRBase"
           - "scVariant"
 
     steps:
