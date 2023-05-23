@@ -1,6 +1,7 @@
 FROM oandrefonseca/scbase:1.0
+
 LABEL maintainer="Andre Fonseca" \
-    description="scPackages - Container with single-cell R dependencies"
+    description="scRPackages - Container with single-cell R dependencies, including cell annotation and batch effect"
 
 # Install ps, for Nextflow. https://www.nextflow.io/docs/latest/tracing.html
 RUN apt-get update && \
