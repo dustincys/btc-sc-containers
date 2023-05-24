@@ -13,7 +13,7 @@ env:
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
   REPO_NAME: ${{ github.repository }}
-  REPO_ORG: ${{ github.repository_owner }}
+  REPO_ORG: "oandrefonseca"
 
 jobs:
   build:
