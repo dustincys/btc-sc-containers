@@ -13,7 +13,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
     echo $TZ > /etc/timezone
 
 # Install system packages required for Python and Micromamba
-RUN apt-get update && \
+RUN --mount=type=cache,target=/var/cache/apt apt-get update && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         wget \
