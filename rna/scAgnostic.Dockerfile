@@ -43,6 +43,6 @@ RUN micromamba clean --all --yes
 
 # Activate the environment
 ENV PATH=/root/micromamba/bin:$PATH
-RUN echo "micromamba activate" > ~/.bashrc
+RUN echo "micromamba activate" >> ~/.bashrc
 
 CMD [ "/bin/bash", "-l", "-c" ]
