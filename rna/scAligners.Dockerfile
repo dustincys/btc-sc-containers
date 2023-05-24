@@ -15,7 +15,7 @@ RUN apt-get update && \
     fastqc
 
 # CellRanger binaries
-RUN wget cellranger-${CELLRANGER_VERSION}.tar.gz -O ${CELLRANGER_URL} \
+RUN wget ${CELLRANGER_URL} -O cellranger-${CELLRANGER_VERSION}.tar.gz \
     && tar xzf cellranger-${CELLRANGER_VERSION}.tar.gz \
     && rm -rf cellranger-${CELLRANGER_VERSION}.tar.gz \
     && mv cellranger-${CELLRANGER_VERSION} /opt/
