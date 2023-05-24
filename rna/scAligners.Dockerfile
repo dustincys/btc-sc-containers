@@ -7,7 +7,7 @@ ARG CELLRANGER_VERSION='7.1.0'
 
 ## Please change the link considering the 10x Genomics End User Software License Agreement
 ARG CELLRANGER_URL="https://www.dropbox.com/s/c2d0yvw1muc5nzj/cellranger-${CELLRANGER_VERSION}.tar.gz?dl=0"
-ENV PATH /opt/cellranger-${CELLRANGER_VERSION}:$PATH
+ENV PATH=/opt/cellranger-${CELLRANGER_VERSION}:$PATH
 
 # Install basic requirments
 RUN apt-get update && \
@@ -22,4 +22,4 @@ RUN wget -O cellranger-${CELLRANGER_VERSION}.tar.gz ${CELLRANGER_URL} \
 
 WORKDIR /opt
 
-CMD  ["cellranger" ]
+CMD  ["cellranger"]
