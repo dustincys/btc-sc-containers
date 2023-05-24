@@ -43,16 +43,16 @@ jobs:
       - name: Build and push child images
         id: build-and-push
         run: |
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scAligners:main --file rna/scAligners.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scRPackages:main --file rna/scRPackages.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scRBase:main --file rna/scRBase.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scVariant:main --file rna/scVariant.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scaligners:main --file rna/scAligners.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrpackages:main --file rna/scRPackages.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrbase:main --file rna/scRBase.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scvariant:main --file rna/scVariant.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
       
       - name: Push images to DockerHub
         if: github.event_name != 'pull_request'
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scAligners:main
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scRPackages:main
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scRBase:main
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scVariant:main
+          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scaligners:main
+          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrpackages:main
+          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrbase:main
+          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scvariant:main
