@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 ghcr.io/wanglab-computationalbiology/scagnostic:main
+FROM --platform=linux/x86_64 oandrefonseca/scagnostic:main
 
 LABEL maintainer="Andre Fonseca" \
     description="scCommons - Container with several packages associated with reports generation and data analysis"
