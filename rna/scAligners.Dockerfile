@@ -16,7 +16,7 @@ RUN apt-get update && \
 
 # CellRanger binaries
 RUN wget ${CELLRANGER_URL} -O cellranger-${CELLRANGER_VERSION}.tar.gz \
-    && tar xzf cellranger-${CELLRANGER_VERSION}.tar.gz \
+    && tar -zxvf cellranger-${CELLRANGER_VERSION}.tar.gz \
     && rm -rf cellranger-${CELLRANGER_VERSION}.tar.gz \
     && mv cellranger-${CELLRANGER_VERSION} /opt/
 

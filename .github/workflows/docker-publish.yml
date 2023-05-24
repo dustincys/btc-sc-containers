@@ -25,10 +25,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-      
+
       - name: Log into DockerHub
         if: github.event_name != 'pull_request'
         uses: docker/login-action@v1
@@ -37,21 +37,40 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       
+      - name: Restore cache
+        id: restore-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            rna/scAgnostic
+            rna/scAligners
+            rna/scRPackages
+            rna/scRBase
+            rna/scVariant
+          key: ${{ runner.os }}-docker-${{ env.REPO_NAME }}-${{ env.REPO_ORG }}-${{ hashFiles('**/Dockerfile') }}
+      
       - name: Build scAgnostic image
-        run: docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --file rna/scAgnostic.Dockerfile .
+        run: docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --file rna/scAgnostic.Dockerfile --cache-from=type=local,src=rna/scAgnostic --cache-to=type=local,dest=rna/scAgnostic .
+
+      - name: Save cache
+        if: steps.restore-cache.outputs.cache-hit != 'true'
+        id: save-cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            rna/scAgnostic
+          key: ${{ runner.os }}-docker-${{ env.REPO_NAME }}-${{ env.REPO_ORG }}-${{ hashFiles('**/Dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-${{ env.REPO_NAME }}-${{ env.REPO_ORG }}-
       
       - name: Build and push child images
         id: build-and-push
         run: |
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scaligners:main --file rna/scAligners.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrpackages:main --file rna/scRPackages.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrbase:main --file rna/scRBase.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scvariant:main --file rna/scVariant.Dockerfile . --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
-      
-      - name: Push images to DockerHub
-        if: github.event_name != 'pull_request'
-        run: |
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scaligners:main --file rna/scAligners.Dockerfile --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --cache-from=type=local,src=rna/scAligners --cache-to=type=local,dest=rna/scAligners .
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrpackages:main --file rna/scRPackages.Dockerfile --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --cache-from=type=local,src=rna/scRPackages --cache-to=type=local,dest=rna/scRPackages .
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrbase:main --file rna/scRBase.Dockerfile --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --cache-from=type=local,src=rna/scRBase --cache-to=type=local,dest=rna/scRBase .
+          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scvariant:main --file rna/scVariant.Dockerfile --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --cache-from=type=local,src=rna/scVariant --cache-to=type=local,dest=rna/scVariant .
+
           docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scaligners:main
           docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrpackages:main
           docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrbase:main
