@@ -1,5 +1,5 @@
 # Use an official Ubuntu Linux as the base image
-FROM ubuntu:20.04
+FROM --platform=linux/x86_64 ubuntu:20.04
 
 LABEL maintainer="Andre Fonseca" \
     description="scBase - The base container for versioning the single-cell R and Python dependencies"
@@ -33,12 +33,16 @@ RUN curl -Ls https://micro.mamba.pm/api/micromamba/linux-64/latest | tar -xvj bi
     mv bin/micromamba /usr/local/bin && \
     rm -rf bin
 
+# Starting enviroment
+RUN micromamba shell init --shell=bash --prefix=/root/micromamba
+
 # Install micromamba modules
 RUN micromamba install -y python=3.8 -n base -c conda-forge jupyter
 RUN micromamba install -y python=3.8 -n base -c conda-forge r-base
 RUN micromamba clean --all --yes
 
-RUN micromamba shell init --shell=bash --prefix=/root/micromamba
-RUN echo "micromamba activate" >> ~/.bashrc
+# Activate the environment
+ENV PATH=/root/micromamba/bin:$PATH
+RUN echo "micromamba activate" > ~/.bashrc
 
-CMD ["R"]
+CMD [ "/bin/bash", "-l", "-c" ]
