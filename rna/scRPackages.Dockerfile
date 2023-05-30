@@ -4,7 +4,8 @@ LABEL maintainer="Andre Fonseca" \
     description="scRPackages - Container with single-cell R dependencies, including cell annotation and batch effect"
 
 # Install ps, for Nextflow. https://www.nextflow.io/docs/latest/tracing.html
-RUN apt-get update && \
+RUN --mount=type=cache,target=/var/cache/apt \ 
+    apt-get update && \
     apt-get install -y jags
 
 # Install required R packages
@@ -41,6 +42,6 @@ ARG R_REPO='http://cran.us.r-project.org'
 # Caching R-lib on the building process
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_DEPS}, Ncpus = 8, repos = \"${R_REPO}\", clean = TRUE)"
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "BiocManager::install(${R_BIOC_DEPS})"
-RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS})"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
 
 CMD ["R"]
