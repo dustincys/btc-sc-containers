@@ -1,6 +1,10 @@
-name: Docker
+# https://samanpavel.medium.com/github-actions-conditional-job-execution-e6aa363d2867
+# https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions
 
+name: Docker
 on:
+  schedule:
+    - cron: '15 1 * * *'
   push:
     branches: [ "main" ]
     # Publish semver tags as releases.
@@ -9,67 +13,104 @@ on:
     branches: [ "main" ]
 
 env:
-  # Use docker.io for DockerHub
   REGISTRY: docker.io
-  # github.repository as <account>/<repo>
-  REPO_NAME: ${{ github.repository }}
-  REPO_ORG: "oandrefonseca"
-
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}   
+    
 jobs:
-  build:
+  btc_parent:
+    env:
+      image_name: scAgnostic
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v2
 
-      - name: Log into DockerHub
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log in to Docker Hub
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      
-      - name: Restore cache
-        id: restore-cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            rna/scAgnostic
-            rna/scAligners
-            rna/scRPackages
-            rna/scRBase
-            rna/scVariant
-          key: ${{ runner.os }}-docker-${{ env.REPO_NAME }}-${{ env.REPO_ORG }}-${{ hashFiles('**/Dockerfile') }}
-      
-      - name: Build scAgnostic image
-        run: docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --file rna/scAgnostic.Dockerfile --cache-from=type=local,src=rna/scAgnostic --cache-to=type=local,dest=rna/scAgnostic .
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Save cache
-        if: steps.restore-cache.outputs.cache-hit != 'true'
-        id: save-cache
-        uses: actions/cache@v2
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
         with:
-          path: |
-            rna/scAgnostic
-          key: ${{ runner.os }}-docker-${{ env.REPO_NAME }}-${{ env.REPO_ORG }}-${{ hashFiles('**/Dockerfile') }}
-          restore-keys: |
-            ${{ runner.os }}-docker-${{ env.REPO_NAME }}-${{ env.REPO_ORG }}-
-      
-      - name: Build and push child images
+          images: ${{ env.REGISTRY }}/${{ env.DOCKERHUB_USERNAME }}/${{ env.image_name }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
         id: build-and-push
-        run: |
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scaligners:main --file rna/scAligners.Dockerfile --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --cache-from=type=local,src=rna/scAligners --cache-to=type=local,dest=rna/scAligners .
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrbase:main --file rna/scRBase.Dockerfile --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --cache-from=type=local,src=rna/scRBase --cache-to=type=local,dest=rna/scRBase .
-          docker buildx build -t ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scvariant:main --file rna/scVariant.Dockerfile --build-arg BASE_IMAGE=${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scagnostic:main --cache-from=type=local,src=rna/scVariant --cache-to=type=local,dest=rna/scVariant .
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: "./rna/${{ env.image_name }}.Dockerfile"
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ env.image_name }}
+          cache-to: type=gha,mode=max,scope=${{ env.image_name }}
 
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scaligners:main
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scrbase:main
-          docker push ${{ env.REGISTRY }}/${{ env.REPO_ORG }}/scvariant:main
+  btc_child:
+    strategy:
+      matrix:
+        image_name:
+          - scAligners
+          - scVariant
+          #- scutils
+          #- scrbatch
+          #- sccnv
+    needs: btc_parent
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Log in to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.DOCKERHUB_USERNAME }}/${{ matrix.image_name }}
+
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          file: "./rna/${{ matrix.image_name }}.Dockerfile"
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.image_name }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.image_name }}
