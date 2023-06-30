@@ -84,11 +84,11 @@ RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${WEB_DEPS}, Ncpus = 8, repos = \"${R_REPO}\", clean = TRUE)"
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_BIOC_DEPS}, Ncpus = 8, repos = \"${R_REPO}\", clean = TRUE)"
 
-#RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${SEURAT}, 'seurat5', repos = \"${R_REPO}\", quiet = TRUE)"
-#RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${SEURAT}, 'seurat5', repos = \"${R_REPO}\", quiet = TRUE)"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
 
 # Install Seurat Wrappers
-#RUN wget https://api.github.com/repos/oandrefonseca/seurat-wrappers/tarball/seurat5 -O /opt/seurat-wrappers.tar.gz
-#RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-wrappers.tar.gz')"
+RUN wget https://api.github.com/repos/oandrefonseca/seurat-wrappers/tarball/seurat5 -O /opt/seurat-wrappers.tar.gz
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-wrappers.tar.gz')"
 
 CMD ["R"]
