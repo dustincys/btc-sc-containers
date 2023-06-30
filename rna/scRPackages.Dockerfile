@@ -11,15 +11,15 @@ RUN --mount=type=cache,target=/var/cache/apt \
 # Install required R packages
 ARG R_DEPS="c(\
     'harmony', \
-    'scater' \
+    'scater', \
+    'HGNChelper' \
     )"
 
 ARG R_BIOC_DEPS="c(\
     'DropletUtils', \ 
     'MAST', \
     'DESeq2', \
-    'batchelor' \
-    'HGNChelper' \
+    'batchelor', \
     )"
 
 ARG DEV_DEPS="c(\
