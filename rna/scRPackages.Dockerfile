@@ -19,7 +19,7 @@ ARG R_BIOC_DEPS="c(\
     'MAST', \
     'DESeq2', \
     'batchelor' \
-    'HGNChelper', \
+    'HGNChelper' \
     )"
 
 ARG DEV_DEPS="c(\
