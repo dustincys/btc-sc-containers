@@ -19,6 +19,7 @@ ARG R_BIOC_DEPS="c(\
     'MAST', \
     'DESeq2', \
     'batchelor' \
+    'HGNChelper', \
     )"
 
 ARG DEV_DEPS="c(\
@@ -30,6 +31,8 @@ ARG DEV_DEPS="c(\
     'broadinstitute/infercnv', \
     'navinlabcode/copykat', \
     'cole-trapnell-lab/monocle3' \
+    'vinay-swamy/scPOP' \
+    'stephenturner/annotables' \
     )"
 
 # Cleaning apt-get cache
