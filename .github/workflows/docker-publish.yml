@@ -73,9 +73,7 @@ jobs:
         image_name:
           - scAligners
           - scVariant
-          #- scutils
-          #- scrbatch
-          #- sccnv
+          - scRPackages
     needs: btc_parent
     runs-on: ubuntu-latest
     permissions:
