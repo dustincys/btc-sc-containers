@@ -1,12 +1,25 @@
-FROM --platform=linux/x86_64 oandrefonseca/scagnostic:main
+FROM --platform=linux/x86_64 ubuntu:20.04
 
 LABEL maintainer="Andre Fonseca" \
-    description="scCommons - Container with several packages associated with reports generation and data analysis"
+    description="scRBase - Container with several packages associated with reports generation and data analysis"
+
+# Timezone settings
+ENV TZ=US/Central
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
 
 # Install ps, for Nextflow. https://www.nextflow.io/docs/latest/tracing.html
 RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && \
     apt-get install -y procps \
+    ca-certificates \
+    wget \
+    curl \
+    bzip2 \
+    libglib2.0-0 \
+    libxext6 \
+    libsm6 \
+    libxrender1 \
     software-properties-common \
     pandoc \
     libcurl4-openssl-dev \
@@ -40,12 +53,8 @@ ARG R_DEPS="c(\
     'devtools', \
     'rmarkdown', \
     'patchwork', \
-    'BiocManager' \
-    )"
-
-ARG SEURAT="c(\
-    'satijalab/seurat', \
-    'satijalab/seurat-data' \
+    'BiocManager', \
+    'remotes' \
     )"
 
 ARG DEV_DEPS="c(\
@@ -72,7 +81,7 @@ ARG R_BIOC_DEPS="c(\
     'HDF5Array', \ 
     'limma', \
     'lme4', \
-    'terra',\ 
+    'terra', \ 
     'ggrastr' \
     )"
 
@@ -84,11 +93,15 @@ RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${WEB_DEPS}, Ncpus = 8, repos = \"${R_REPO}\", clean = TRUE)"
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_BIOC_DEPS}, Ncpus = 8, repos = \"${R_REPO}\", clean = TRUE)"
 
-RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${SEURAT}, 'seurat5', repos = \"${R_REPO}\", quiet = TRUE)"
-RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
-
 # Install Seurat Wrappers
-RUN wget https://api.github.com/repos/oandrefonseca/seurat-wrappers/tarball/seurat5 -O /opt/seurat-wrappers.tar.gz
-RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-wrappers.tar.gz')"
+RUN wget https://github.com/satijalab/seurat/archive/refs/heads/seurat5.zip -O /opt/seurat-v5.zip
+RUN wget https://github.com/satijalab/seurat-data/archive/refs/heads/seurat5.zip -O /opt/seurat-data.zip
+RUN wget https://github.com/satijalab/seurat-wrappers/archive/refs/heads/seurat5.zip -O /opt/seurat-wrappers.zip
+
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-v5.zip')"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-data.zip')"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-wrappers.zip')"
+
+#RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
 
 CMD ["R"]

@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 oandrefonseca/scrbase:main
+FROM --platform=linux/x86_64 oandrefonseca/scrbase:1.0
 
 LABEL maintainer="Andre Fonseca" \
     description="scRPackages - Container with single-cell R dependencies, including cell annotation and batch effect"
@@ -19,7 +19,7 @@ ARG R_BIOC_DEPS="c(\
     'DropletUtils', \ 
     'MAST', \
     'DESeq2', \
-    'batchelor', \
+    'batchelor' \
     )"
 
 ARG DEV_DEPS="c(\
@@ -30,8 +30,8 @@ ARG DEV_DEPS="c(\
     'AntonioDeFalco/SCEVAN', \
     'broadinstitute/infercnv', \
     'navinlabcode/copykat', \
-    'cole-trapnell-lab/monocle3' \
-    'vinay-swamy/scPOP' \
+    'cole-trapnell-lab/monocle3', \
+    'vinay-swamy/scPOP', \
     'stephenturner/annotables' \
     )"
 
@@ -45,6 +45,6 @@ ARG R_REPO='http://cran.us.r-project.org'
 # Caching R-lib on the building process
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_DEPS}, Ncpus = 8, repos = \"${R_REPO}\", clean = TRUE)"
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "BiocManager::install(${R_BIOC_DEPS})"
-RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "remotes::install_github(${DEV_DEPS})"
 
 CMD ["R"]
