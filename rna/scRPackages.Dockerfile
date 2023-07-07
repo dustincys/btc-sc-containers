@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 oandrefonseca/scrbase:1.0
+FROM --platform=linux/x86_64 oandrefonseca/scrbase:main
 
 LABEL maintainer="Andre Fonseca" \
     description="scRPackages - Container with single-cell R dependencies, including cell annotation and batch effect"
