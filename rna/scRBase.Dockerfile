@@ -1,4 +1,4 @@
-FROM r-base:4.3.0
+FROM --platform=linux/x86_64 r-base:4.3.0
 
 LABEL maintainer="Andre Fonseca" \
     description="scRBase - Container with several packages associated with reports generation and data analysis"
