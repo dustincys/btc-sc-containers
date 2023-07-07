@@ -43,11 +43,6 @@ RUN dpkg -i /opt/gcc-6-base_6.4.0-17ubuntu1_amd64.deb
 RUN wget http://archive.ubuntu.com/ubuntu/pool/universe/g/gcc-6/libgfortran3_6.4.0-17ubuntu1_amd64.deb -O /opt/libgfortran3_6.4.0-17ubuntu1_amd64.deb
 RUN dpkg -i /opt/libgfortran3_6.4.0-17ubuntu1_amd64.deb
 
-# Downloading Quarto
-RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.433/quarto-1.3.433-linux-amd64.tar.gz -O /opt/quarto-1.3.433-linux-amd64.tar.gz
-RUN tar -C /opt -xvzf quarto-1.3.433-linux-amd64.tar.gz
-RUN ln -s /opt/quarto-1.3.433/bin/quarto /bin/quarto
-
 # Cleaning apt-get cache
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
