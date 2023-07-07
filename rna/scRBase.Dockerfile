@@ -1,4 +1,4 @@
-FROM --platform=linux/x86_64 ubuntu:20.04
+FROM --platform=linux/x86_64 r-base:4.3.0
 
 LABEL maintainer="Andre Fonseca" \
     description="scRBase - Container with several packages associated with reports generation and data analysis"
@@ -22,6 +22,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     libxrender1 \
     software-properties-common \
     pandoc \
+    quarto \
     libcurl4-openssl-dev \
     r-cran-curl \
     libssl-dev \
@@ -42,6 +43,12 @@ RUN dpkg -i /opt/gcc-6-base_6.4.0-17ubuntu1_amd64.deb
 # Downloading and Install libgfortran3_6
 RUN wget http://archive.ubuntu.com/ubuntu/pool/universe/g/gcc-6/libgfortran3_6.4.0-17ubuntu1_amd64.deb -O /opt/libgfortran3_6.4.0-17ubuntu1_amd64.deb
 RUN dpkg -i /opt/libgfortran3_6.4.0-17ubuntu1_amd64.deb
+
+# Downloading Quarto
+RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.433/quarto-1.3.433-linux-amd64.tar.gz -O /opt/quarto-1.3.433-linux-amd64.tar.gz
+RUN tar -C /opt -xvzf quarto-1.3.433-linux-amd64.tar.gz
+RUN ln -s /opt/quarto-1.3.433/bin/quarto /bin/quarto
+RUN quarto check
 
 # Cleaning apt-get cache
 RUN apt-get clean
@@ -102,6 +109,6 @@ RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_loc
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-data.zip')"
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_local('/opt/seurat-wrappers.zip')"
 
-#RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github(${DEV_DEPS}, repos = \"${R_REPO}\")"
 
 CMD ["R"]
