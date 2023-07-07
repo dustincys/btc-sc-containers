@@ -1,5 +1,5 @@
 # Use an official Ubuntu Linux as the base image
-FROM ubuntu:20.04
+FROM --platform=linux/x86_64 ubuntu:20.04
 
 LABEL maintainer="Andre Fonseca" \
     description="scRBase - The base container for versioning the single-cell R and Python dependencies"

@@ -1,4 +1,4 @@
-FROM oandrefonseca/scagnostic:main
+FROM  --platform=linux/x86_64 oandrefonseca/scagnostic:main
 
 LABEL maintainer="Andre Fonseca" \
     description="scVariant - Container with scAllele and other variant callings"
