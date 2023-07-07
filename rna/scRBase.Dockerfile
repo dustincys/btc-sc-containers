@@ -22,7 +22,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
     libxrender1 \
     software-properties-common \
     pandoc \
-    quarto \
     libcurl4-openssl-dev \
     r-cran-curl \
     libssl-dev \
@@ -48,7 +47,6 @@ RUN dpkg -i /opt/libgfortran3_6.4.0-17ubuntu1_amd64.deb
 RUN wget https://github.com/quarto-dev/quarto-cli/releases/download/v1.3.433/quarto-1.3.433-linux-amd64.tar.gz -O /opt/quarto-1.3.433-linux-amd64.tar.gz
 RUN tar -C /opt -xvzf quarto-1.3.433-linux-amd64.tar.gz
 RUN ln -s /opt/quarto-1.3.433/bin/quarto /bin/quarto
-RUN quarto check
 
 # Cleaning apt-get cache
 RUN apt-get clean
