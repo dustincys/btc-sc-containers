@@ -19,7 +19,8 @@ ARG R_BIOC_DEPS="c(\
     'DropletUtils', \ 
     'MAST', \
     'DESeq2', \
-    'batchelor' \
+    'batchelor', \
+    'scDblFinder' \
     )"
 
 ARG DEV_DEPS="c(\
@@ -32,7 +33,8 @@ ARG DEV_DEPS="c(\
     'navinlabcode/copykat', \
     'cole-trapnell-lab/monocle3', \
     'vinay-swamy/scPOP', \
-    'stephenturner/annotables' \
+    'stephenturner/annotables', \
+    'chris-mcginnis-ucsf/DoubletFinder' \
     )"
 
 # Cleaning apt-get cache
