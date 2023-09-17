@@ -49,4 +49,7 @@ RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "BiocManager::install(${R_BIOC_DEPS})"
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "remotes::install_github(${DEV_DEPS})"
 
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "remotes::install_github('saezlab/liana')"
+RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "devtools::install_github('sqjin/CellChat')"
+
 CMD ["R"]
