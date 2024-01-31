@@ -1,13 +1,13 @@
 # Use mambaorg/micromamba as the base image
-FROM oandrefonseca/scagnostic:main
+FROM --platform=linux/x86_64 oandrefonseca/scagnostic:main
 
 LABEL maintainer="Andre Fonseca" \
     description="scTCR - Collection of methods related to scTCR analysis and scRNA/TCR integration"
 
 # Timezone settings
-# ENV TZ=US/Central
-# RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-#     echo $TZ > /etc/timezone
+ENV TZ=US/Central
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone
 
 # Install system packages required for Python and Micromamba
 RUN --mount=type=cache,target=/var/cache/apt apt-get update && \
