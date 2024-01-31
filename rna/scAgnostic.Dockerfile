@@ -23,6 +23,9 @@ RUN --mount=type=cache,target=/var/cache/apt apt-get update && \
         libsm6 \
         libxrender1
 
+# Install git
+RUN apt-get install -y git
+
 # Cleaning apt-get cache
 RUN apt-get clean
 RUN rm -rf /var/lib/apt/lists/*
@@ -38,6 +41,7 @@ RUN micromamba shell init --shell=bash --prefix=/root/micromamba
 # Install micromamba modules
 RUN micromamba install -y python=3.8 -n base -c conda-forge jupyter
 RUN micromamba install -y python=3.8 -n base -c conda-forge r-base
+
 RUN micromamba clean --all --yes
 
 # Activate the environment

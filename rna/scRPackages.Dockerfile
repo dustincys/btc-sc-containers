@@ -4,7 +4,7 @@ LABEL maintainer="Andre Fonseca" \
     description="scRPackages - Container with single-cell R dependencies, including cell annotation and batch effect"
 
 # Install ps, for Nextflow. https://www.nextflow.io/docs/latest/tracing.html
-RUN --mount=type=cache,target=/var/cache/apt \ 
+RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && \
     apt-get install -y jags
 
@@ -16,7 +16,7 @@ ARG R_DEPS="c(\
     )"
 
 ARG R_BIOC_DEPS="c(\
-    'DropletUtils', \ 
+    'DropletUtils', \
     'MAST', \
     'DESeq2', \
     'batchelor', \
@@ -49,9 +49,8 @@ RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "install.packages(${R_
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "BiocManager::install(${R_BIOC_DEPS})"
 RUN --mount=type=cache,target=/usr/local/lib/R Rscript -e "remotes::install_github(${DEV_DEPS})"
 
-
 # Install ps, for Nextflow. https://www.nextflow.io/docs/latest/tracing.html
-RUN --mount=type=cache,target=/var/cache/apt \ 
+RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && \
     apt-get install -y libcairo2-dev libxt-dev libnlopt-dev
 
