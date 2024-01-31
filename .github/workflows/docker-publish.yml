@@ -14,8 +14,8 @@ on:
 
 env:
   REGISTRY: docker.io
-  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}   
-    
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
 jobs:
   btc_parent:
     env:
@@ -75,6 +75,8 @@ jobs:
           - scAligners
           - scVariant
           - scRBase
+          - scBatch
+          - scTCR
     needs: btc_parent
     runs-on: ubuntu-latest
     permissions:
