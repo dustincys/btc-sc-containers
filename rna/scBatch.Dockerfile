@@ -5,9 +5,9 @@ LABEL maintainer="Andre Fonseca" \
     description="scBatch - Collection of methods related to batch correction for single-cell analysis"
 
 # Timezone settings
-ENV TZ=US/Central
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone
+#ENV TZ=US/Central
+#RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && \
+#    echo $TZ > /etc/timezone
 
 # Install required R packages
 ARG R_DEPS="c(\
